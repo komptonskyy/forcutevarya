@@ -1,0 +1,944 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Чтобы мир стал милее — огромный милый отчёт для моей любимой подруги ✨</title>
+
+  <!-- Шрифты: уютно, по-домашнему -->
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;700&family=Playfair+Display:wght@400;600&family=Caveat:wght@400;700&display=swap" rel="stylesheet">
+
+
+
+  <style>
+    :root {
+      --bg-gradient: linear-gradient(180deg, #fff3f9 0%, #ffe3f0 18%, #ffd7ee 36%, #f9d0e3 54%, #f6c8d8 72%, #f6c8d8 100%);
+      --accent-gold: #d4af37;
+      --accent-rose: #b57c83;
+      --text-dark: #2f2a2a;
+      --text-muted: #6b5b63;
+      --soft: rgba(255,255,255,.92);
+      --glass: rgba(255,255,255,.85);
+      --shadow: 0 16px 40px rgba(160, 110, 140, 0.18);
+      --glow: 0 0 14px rgba(212, 175, 55, 0.45);
+      --pink: #ffb6d6;
+      --mint: #a6f5d5;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html, body { height: 100%; }
+
+    body {
+      font-family: 'Montserrat', sans-serif;
+      background: var(--bg-gradient);
+      color: var(--text-dark);
+      overflow-x: hidden;
+      line-height: 1.8;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    #canvas-bg {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      pointer-events: none;
+      opacity: 0.8;
+    }
+
+    .wrapper {
+      position: relative;
+      z-index: 1;
+      padding-bottom: 80px;
+    }
+
+    header.site-header {
+      position: sticky;
+      top: 0;
+      z-index: 5;
+      background: rgba(255, 255, 255, 0.75);
+      backdrop-filter: saturate(1.2) blur(6px);
+      border-bottom: 1px solid rgba(0,0,0,.05);
+    }
+
+    .nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 14px 20px;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-weight: 700;
+      font-family: 'Playfair Display', serif;
+      letter-spacing: .5px;
+    }
+
+    .logo .dot {
+      width: 12px; height: 12px; border-radius: 50%;
+      background: radial-gradient(circle at 30% 30%, #ffd1e8, #ff7aa2);
+      box-shadow: 0 0 8px rgba(255, 106, 170, 0.8);
+    }
+
+    nav a {
+      color: var(--text-dark);
+      text-decoration: none;
+      margin: 0 8px;
+      padding: 8px 12px;
+      border-radius: 999px;
+      transition: all .3s ease;
+      font-weight: 500;
+    }
+    nav a:hover { background: rgba(213, 167, 208, 0.25); transform: translateY(-1px); }
+
+    /* Главные секции — милый, уютный стиль на всю высоту экрана */
+    section {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      padding: 70px 20px;
+      position: relative;
+    }
+
+    /* Небольшие подписи между секциями */
+    .section-label {
+      font-family: 'Playfair Display', serif;
+      font-style: italic;
+      font-size: 0.95rem;
+      color: var(--accent-rose);
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      margin-bottom: 14px;
+      opacity: .95;
+    }
+
+    /* Заголовок-романс — милый слоган подруге */
+    .hero {
+      text-align: center;
+      padding: 6px 14px;
+    }
+    .hero h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: 3.9rem;
+      line-height: 1.08;
+      color: var(--text-dark);
+      margin-bottom: 8px;
+    }
+    .hero .name {
+      font-family: 'Caveat', cursive;
+      color: var(--accent-rose);
+      font-size: 5.2rem;
+      display: inline-block;
+      margin-top: 6px;
+      text-shadow: 0 1px 0 rgba(255,255,255,.9);
+    }
+
+    /* Милые карточки-отчеты */
+    .card {
+      background: var(--soft);
+      border-radius: 28px;
+      padding: 28px;
+      max-width: 980px;
+      width: 100%;
+      box-shadow: var(--shadow);
+      border: 1px solid rgba(0,0,0,.04);
+      transform: translateY(10px);
+      opacity: 0;
+      transition: all .9s cubic-bezier(.2,.8,.2,1);
+      text-align: left;
+    }
+
+    .card.visible {
+      transform: translateY(0);
+      opacity: 1;
+    }
+
+    .card h2 {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.9rem;
+      color: var(--text-dark);
+      margin-bottom: 10px;
+    }
+
+    .tile-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 14px;
+      margin-top: 12px;
+    }
+
+    .tile {
+      background: #fff;
+      border-radius: 14px;
+      padding: 12px;
+      border: 1px solid rgba(0,0,0,.05);
+      display: grid;
+      place-items: center;
+      min-height: 84px;
+      box-shadow: 0 6px 16px rgba(0,0,0,.04);
+    }
+
+    .tile .num {
+      font-family: 'Playfair Display', serif;
+      font-size: 2.3rem;
+      color: var(--accent-rose);
+      line-height: 1;
+    }
+    .tile .lbl {
+      font-size: 0.72rem;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      letter-spacing: 1px;
+    }
+
+    /* Мягкие переходы секций по скроллу */
+    .reveal { opacity: 0; transform: translateY(20px); transition: all .6s ease; }
+    .reveal.visible { opacity: 1; transform: translateY(0); }
+
+    /* Галерея — красивая сетка картинок (SVG) */
+    .gallery {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
+      gap: 14px;
+      width: min(1200px, 92%);
+      margin: 8px 0 0;
+    }
+    figure.image-card {
+      background: white;
+      padding: 12px;
+      border-radius: 14px;
+      border: 1px solid rgba(0,0,0,.05);
+      display: grid;
+      justify-items: center;
+      align-items: center;
+      min-height: 160px;
+      box-shadow: 0 8px 18px rgba(0,0,0,.04);
+      transition: transform .35s ease;
+    }
+    figure.image-card:hover { transform: translateY(-4px) scale(1.02); }
+
+    figcaption.caption {
+      font-family: 'Montserrat', sans-serif;
+      font-size: .78rem;
+      color: var(--text-muted);
+      text-align: center;
+      padding-top: 6px;
+    }
+
+    /* Текстовые блоки — поэзия, мысли и благодарность */
+    .text-block {
+      font-family: 'Playfair Display', serif;
+      color: var(--text-dark);
+      font-size: 1.25rem;
+      line-height: 1.9;
+      max-width: 860px;
+      text-align: center;
+      margin: 6px auto 12px;
+    }
+
+    .highlight {
+      font-family: 'Playfair Display', serif;
+      font-style: italic;
+      color: var(--accent-rose);
+      font-weight: 600;
+    }
+
+    /* Секретное письмо */
+    .letter-wrap {
+      text-align: center;
+      padding: 20px;
+    }
+    .secret-btn {
+      font-family: 'Montserrat', sans-serif;
+      font-weight: 700;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      padding: 16px 40px;
+      border-radius: 999px;
+      border: none;
+      cursor: pointer;
+      background: linear-gradient(135deg, #ffa6c9 0%, #ff7ab6 100%);
+      color: #fff;
+      box-shadow: 0 12px 28px rgba(255,122,182,.3);
+      transition: transform .25s ease;
+    }
+    .secret-btn:hover { transform: translateY(-2px); }
+
+    .letter {
+      display: none;
+      margin: 18px auto 0;
+      max-width: 700px;
+      padding: 28px;
+      border-radius: 18px;
+      background: #fffdf8;
+      border: 1px solid rgba(255, 180, 210, 0.6);
+      box-shadow: inset 0 0 40px rgba(255, 180, 210, 0.08);
+      font-family: 'Caveat', cursive;
+      font-size: 1.9rem;
+      line-height: 1.45;
+      text-align: center;
+    }
+
+    /* Элементы стилизованной анимации текста */
+    .typewriter {
+      overflow: hidden;
+      border-right: .12em solid currentColor;
+      white-space: nowrap;
+      animation: typing 5s steps(40, end) infinite;
+      display: inline-block;
+      font-weight: 500;
+      color: #555;
+    }
+    @keyframes typing {
+      from { width: 0; }
+      to { width: 100%; }
+    }
+
+    @keyframes blink {
+      50% { border-color: transparent; }
+    }
+
+    /* Анимации сердца в рамках фона */
+    canvas.pulse {
+      position: fixed;
+      left: 0; top: 0;
+      width: 100%; height: 100%;
+      z-index: 0;
+      pointer-events: none;
+    }
+
+
+    /* Живой отчёт — мягкое стекло и лёгкое свечение */
+    #report {
+      position: relative;
+      overflow: hidden;
+      background:
+        radial-gradient(circle at 10% 0%, rgba(255,182,214,.32), transparent 34%),
+        radial-gradient(circle at 90% 100%, rgba(166,245,213,.20), transparent 35%),
+        rgba(255,255,255,.88);
+      border: 1px solid rgba(255, 150, 195, .22);
+    }
+
+    #report::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      background: linear-gradient(120deg, transparent 25%, rgba(255,255,255,.55) 50%, transparent 75%);
+      transform: translateX(-120%);
+      animation: reportShine 7s ease-in-out infinite;
+    }
+
+    #report .tile {
+      position: relative;
+      overflow: hidden;
+      background: rgba(255,255,255,.72);
+      border: 1px solid rgba(255,160,200,.18);
+      transition: transform .3s ease, box-shadow .3s ease;
+    }
+
+    #report .tile:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 12px 28px rgba(181,124,131,.14);
+    }
+
+    #report .num {
+      font-variant-numeric: tabular-nums;
+      min-width: 2ch;
+      text-shadow: 0 2px 12px rgba(181,124,131,.12);
+    }
+
+    .live-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      margin: 2px auto 14px;
+      padding: 7px 13px;
+      border-radius: 999px;
+      background: rgba(255, 182, 214, .18);
+      color: var(--accent-rose);
+      font-size: .72rem;
+      font-weight: 700;
+      letter-spacing: 1.2px;
+      text-transform: uppercase;
+    }
+
+    .live-badge::before {
+      content: "";
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #ff7aa2;
+      box-shadow: 0 0 0 0 rgba(255,122,162,.45);
+      animation: livePulse 1.8s infinite;
+    }
+
+    .report-subtitle {
+      text-align: center;
+      font-size: .92rem;
+      color: var(--text-muted);
+      margin-top: -3px;
+      margin-bottom: 14px;
+    }
+
+    @keyframes livePulse {
+      0% { box-shadow: 0 0 0 0 rgba(255,122,162,.45); }
+      70% { box-shadow: 0 0 0 9px rgba(255,122,162,0); }
+      100% { box-shadow: 0 0 0 0 rgba(255,122,162,0); }
+    }
+
+    @keyframes reportShine {
+      0%, 55% { transform: translateX(-120%); }
+      75%, 100% { transform: translateX(120%); }
+    }
+
+    /* Адаптивность */
+    @media (max-width: 1024px) {
+      .hero { padding: 0 12px; }
+      .hero h1 { font-size: 3.2rem; }
+      .hero .name { font-size: 4.5rem; }
+      .tile-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+
+    @media (max-width: 700px) {
+      .hero h1 { font-size: 2.4rem; line-height: 1.15; }
+      .hero .name { font-size: 3.8rem; }
+      .tile-grid { grid-template-columns: 1fr; }
+      .gallery { grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); }
+      .text-block { font-size: 1.05rem; }
+    }
+
+  </style>
+</head>
+<body>
+
+  <canvas id="canvas-bg" class="pulse"></canvas>
+
+  <header class="site-header" aria-label="Навигация по сайту">
+    <div class="nav">
+      <div class="logo" aria-label="Логотип и приветствие">
+        <span class="dot" aria-hidden="true"></span>
+        <span>Мир милее с тобой</span>
+      </div>
+      <nav aria-label="Главная навигация">
+        <a href="#intro" >Привет</a>
+        <a href="#report" >Отчёт</a>
+        <a href="#memories" >Воспоминания</a>
+        <a href="#gallery" >Галерея</a>
+        <a href="#poetry" >Стихи</a>
+        <a href="#letters" >Письмо</a>
+        <a href="#footer" >Контакты</a>
+      </nav>
+    </div>
+  </header>
+
+  <div class="wrapper">
+
+    <!-- СЕКЦИЯ 1: Приветствие и большой милый заголовок -->
+    <section id="intro" aria-label="Вступление" class="reveal visible" style="padding-top: 90px;">
+      <div class="section-label" style="text-transform: uppercase; letter-spacing: 2px;">
+        Глава 1 • Ты и я — лучшее сочетание
+      </div>
+
+      <div class="hero" style="margin-top: 8px;">
+        <h1>
+          Тебе, моя самая милая подруга, говорю это без формальностей:
+          <br />
+          Ты делаешь мир ярче просто своим присутствием
+          <span class="name">и это бесценно</span>
+        </h1>
+      </div>
+
+      <p class="text-block" style="text-align:center; margin-top:18px;">
+        Ты — мой тёплый чай в дождливый день, моя улыбка после трудного утра и
+        моя самая верная команда в любых безумиях. Спасибо, что ты есть.
+        <span class="highlight" style="margin-left:6px;">Люблю тебя сильно-сильно</span>.
+      </p>
+
+      <!-- Живой отчёт: стартовая точка — 4 дня и 3 часа назад -->
+      <div id="report" class="card reveal visible" style="margin-top:18px;">
+        <div class="live-badge">Идёт в реальном времени</div>
+        <h2 style="text-align:center;">Отчёт за период</h2>
+        <div class="report-subtitle">Время не останавливается — как и наши воспоминания ✨</div>
+
+        <div class="tile-grid" aria-label="Статистика отчёта" style="grid-template-columns: repeat(4, 1fr);">
+          <div class="tile">
+            <div class="num" id="report-days">4</div>
+            <div class="lbl">дней</div>
+          </div>
+          <div class="tile">
+            <div class="num" id="report-hours">3</div>
+            <div class="lbl">часов</div>
+          </div>
+          <div class="tile">
+            <div class="num" id="report-minutes">0</div>
+            <div class="lbl">минут</div>
+          </div>
+          <div class="tile">
+            <div class="num" id="report-seconds">0</div>
+            <div class="lbl">секунд</div>
+          </div>
+        </div>
+
+        <div class="text-block" style="text-align:center; margin-top:16px;">
+          Этот отчёт работает непрерывно 24/7 и сохраняет время даже после обновления страницы.
+          <span class="highlight">Каждая новая секунда — ещё один момент нашей истории.</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- СЕКЦИЯ 2: Воспоминания — милые истории + таймлайн -->
+    <section id="memories" aria-label="Воспоминания" class="reveal" style="padding-top: 40px;">
+      <div class="section-label">Глава 2 • Воспоминания, которыми можно похвастаться</div>
+
+      <div class="card reveal visible" style="padding:26px;">
+        <h2 style="text-align:center; margin-bottom:8px;">Наши маленькие и огромные моменты</h2>
+        <p class="text-block" style="text-align:center; font-size:1.05rem;">
+          Мы вместе прошли через радость и тревоги, и в каждом дне заметок — твой свет.
+          Ниже — история наших дней, которые мы складываем в один большой альбом.
+        </p>
+
+        <!-- Таймлайн — 4 дня / 3 часа — события -->
+        <div style="max-width: 860px; margin: 16px auto 0; position: relative;">
+          <div aria-label="Временная шкала" style="position: relative; padding-left: 22px;">
+            <span style="position:absolute; left:0; top:0; bottom:0; width: 2px; background: #f2a3bc; border-radius: 2px;"></span>
+
+            <!-- Пункт 1 -->
+            <div style="position: relative; margin: 28px 0;">
+              <span style="position:absolute; left:-34px; top:6px; width: 18px; height:18px; background:#ffb0c8; border-radius:50%; box-shadow:0 0 0 4px rgba(255,176,200,.15)"></span>
+              <div class="text-block" style="font-weight:600; font-size:1.15rem;">
+                4 дня назад — мы впервые начали общаться так близко, по началу я думал что это просто милые сообщения и так далее, но сейчас я понимаю что ты та самая подруга которой у меня никогда не было, и которую я так долго ждал.
+              </div>
+              <div class="text-block" style="font-size:.95rem; color:var(--text-muted);">
+                Наше общение началось спонтанно, но это и придало ему такие краски и милые моменты.
+              </div>
+            </div>
+
+            <!-- Пункт 2 -->
+            <div style="position: relative; margin: 28px 0;">
+              <span style="position:absolute; left:-34px; top:6px; width: 18px; height:18px; background:#ff8fb5; border-radius:50%; box-shadow:0 0 0 4px rgba(255,143,181,.15)"></span>
+              <div class="text-block" style="font-weight:600; font-size:1.15rem;">
+                3 дня назад мы стали менее стеснительны и открыты друг другу.
+              </div>
+              <div class="text-block" style="font-size:.95rem; color:var(--text-muted);">
+                После моих извинений из за той ситуации ночью, я понял что больше никогда не хочу тебя разачаровывать и делать так что бы ты обижалась.
+              </div>
+            </div>
+
+            <!-- Пункт 3 -->
+            <div style="position: relative; margin: 28px 0;">
+              <span style="position:absolute; left:-34px; top:6px; width: 18px; height:18px; background:#ffd9fb; border-radius:50%; box-shadow:0 0 0 4px rgba(255,217,251,.15)"></span>
+              <div class="text-block" style="font-weight:600; font-size:1.15rem;">
+                2 дня назад мы писали друг другу милые сообщения от которых в моем сердце все еще горит огонек тепла.
+              </div>
+              <div class="text-block" style="font-size:.95rem; color:var(--text-muted);">
+                И каждое из тех сообщений до сих пор хранится в моей памяти как особенный момент.
+              </div>
+            </div>
+
+            <!-- Пункт 4 -->
+            <div style="position: relative; margin: 28px 0;">
+              <span style="position:absolute; left:-34px; top:6px; width: 18px; height:18px; background:#f8d8ff; border-radius:50%; box-shadow:0 0 0 4px rgba(248,216,255,.15)"></span>
+              <div class="text-block" style="font-weight:600; font-size:1.15rem;">
+                1 день назад мы решили спать вместе, просто потому что нам комфортно вдвоем.
+              </div>
+              <div class="text-block" style="font-size:.95rem; color:var(--text-muted);">
+                И как бы это ни было странно, меня это устроило и я стал на мнгновение счастливее с тобой.
+              </div>
+            </div>
+
+            <!-- Пункт 5 -->
+            <div style="position: relative; margin: 28px 0;">
+              <span style="position:absolute; left:-34px; top:6px; width: 18px; height:18px; background:#ffd1a8; border-radius:50%; box-shadow:0 0 0 4px rgba(255,209,168,.15)"></span>
+              <div class="text-block" style="font-weight:600; font-size:1.15rem;">
+                Сегодня мы свободно общаемся на любые темы, даже те о которых мы бы не подумали в первый день нашей встречи.
+              </div>
+              <div class="text-block" style="font-size:.95rem; color:var(--text-muted);">
+                Ты питаешь мою веру в дружбу, и даешь надежду на то что я не один в этом мире.
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- СЕКЦИЯ 3: Галерея — милые иллюстрации и анимации текста -->
+    <section id="gallery" aria-label="Галерея" class="reveal" style="padding-top: 10px;">
+      <div class="section-label">Галерея наших маленьких чудес</div>
+
+      <div class="gallery" aria-label="Коллекция милых картинок">
+        <!-- 12 SVG-миниатюр с подписями -->
+        <figure class="image-card">
+          <svg width="180" height="120" viewBox="0 0 180 120" xmlns="http://www.w3.org/2000/svg">
+            <defs><linearGradient id="gA" x1="0" x2="1" y1="0" y2="1">
+              <stop offset="0%" stop-color="#ffd1e8"/><stop offset="100%" stop-color="#ff7db7"/>
+            </linearGradient></defs>
+            <rect width="180" height="120" rx="14" fill="url(#gA)"/>
+            <circle cx="60" cy="60" r="16" fill="#fff" opacity="0.8"/>
+            <circle cx="120" cy="60" r="20" fill="#fff" opacity="0.9"/>
+          </svg>
+          <figcaption class="caption">Уютный кадр</figcaption>
+        </figure>
+
+        <figure class="image-card">
+          <svg width="180" height="120" viewBox="0 0 180 120" xmlns="http://www.w3.org/2000/svg">
+            <rect width="180" height="120" rx="14" fill="#fff0f5"/>
+            <path d="M20 100 Q90 20 160 80" stroke="#ff7ab6" stroke-width="8" fill="none" />
+            <circle cx="85" cy="54" r="6" fill="#ff4d8a"/>
+          </svg>
+          <figcaption class="caption">Любовь в линиях</figcaption>
+        </figure>
+
+        <figure class="image-card">
+          <svg width="180" height="120" viewBox="0 0 180 120" xmlns="http://www.w3.org/2000/svg">
+            <defs><linearGradient id="gB" x1="0" x2="1" y1="0" y2="1">
+              <stop offset="0%" stop-color="#fffab1"/><stop offset="100%" stop-color="#ffd166"/>
+            </linearGradient></defs>
+            <rect width="180" height="120" rx="14" fill="url(#gB)"/>
+            <circle cx="60" cy="60" r="14" fill="#fff"/>
+            <circle cx="120" cy="60" r="14" fill="#fff"/>
+          </svg>
+          <figcaption class="caption">Солнечный день</figcaption>
+        </figure>
+
+        <figure class="image-card">
+          <svg width="180" height="120" viewBox="0 0 180 120" xmlns="http://www.w3.org/2000/svg">
+            <rect width="180" height="120" rx="14" fill="#fff0f2"/>
+            <path d="M20 100 C60 40, 120 40, 160 100" stroke="#ff9ecb" stroke-width="6" fill="none"/>
+            <circle cx="90" cy="60" r="10" fill="#ff8bd1"/>
+          </svg>
+          <figcaption class="caption">Милый изгиб дня</figcaption>
+        </figure>
+
+        <figure class="image-card">
+          <svg width="180" height="120" viewBox="0 0 180 120" xmlns="http://www.w3.org/2000/svg">
+            <rect width="180" height="120" rx="14" fill="#e8fff9"/>
+            <path d="M20 60 Q90 20 160 60" stroke="#2bd2a6" stroke-width="6" fill="none"/>
+            <circle cx="60" cy="60" r="6" fill="#2bd2a6"/>
+          </svg>
+          <figcaption class="caption">Тёмно-розовая мечта</figcaption>
+        </figure>
+
+        <figure class="image-card">
+          <svg width="180" height="120" viewBox="0 0 180 120" xmlns="http://www.w3.org/2000/svg">
+            <rect width="180" height="120" rx="14" fill="#fff0f3"/>
+            <circle cx="90" cy="60" r="28" fill="#ffbedf"/>
+            <circle cx="60" cy="60" r="8" fill="#ff5a9a"/>
+            <circle cx="120" cy="60" r="8" fill="#ff5a9a"/>
+          </svg>
+          <figcaption class="caption">Кружочек счастья</figcaption>
+        </figure>
+
+        <figure class="image-card">
+          <svg width="180" height="120" viewBox="0 0 180 120" xmlns="http://www.w3.org/2000/svg">
+            <rect width="180" height="120" rx="14" fill="#fff6d1"/>
+            <path d="M20 90 Q90 20 160 90" stroke="#ffd266" stroke-width="6" fill="none"/>
+            <circle cx="90" cy="60" r="12" fill="#ffd266"/>
+          </svg>
+          <figcaption class="caption">Райский уголок</figcaption>
+        </figure>
+
+        <figure class="image-card">
+          <svg width="180" height="120" viewBox="0 0 180 120" xmlns="http://www.w3.org/2000/svg">
+            <rect width="180" height="120" rx="14" fill="#fff"/>
+            <path d="M20 100 Q90 40 160 100" stroke="#fb6a92" stroke-width="6" fill="none"/>
+          </svg>
+          <figcaption class="caption">Потянулись к счастью</figcaption>
+        </figure>
+
+        <figure class="image-card">
+          <svg width="180" height="120" viewBox="0 0 180 120" xmlns="http://www.w3.org/2000/svg">
+            <rect width="180" height="120" rx="14" fill="#fef7ff"/>
+            <circle cx="60" cy="60" r="22" fill="#ffd1e8"/>
+            <circle cx="120" cy="60" r="22" fill="#ffd1e8"/>
+          </svg>
+          <figcaption class="caption">Дружба — светлячки</figcaption>
+        </figure>
+      </div>
+    </section>
+
+    <!-- СЕКЦИЯ 4: Стихи и мелодия слов -->
+    <section id="poetry" aria-label="Поэзия" class="reveal" style="padding-top: 20px;">
+      <div class="section-label">Глава 3 • Стихи, которые звучат сердцем</div>
+
+      <div class="card" style="text-align:center; padding: 28px;">
+        <h2 style="font-family:'Playfair Display', serif; font-size:1.9rem; margin-bottom: 8px;">
+          Иногда слова сами находят путь к твоему сердцу
+        </h2>
+
+        <p class="text-block" style="font-size:1.15rem; display: inline-block;">
+          Ты — как тёплый чай во влажный вечер, который снимает усталость и дарит спокойствие.
+          Твоя улыбка — мой солнечный луч, который просыпает меня каждое утро.
+          Мы — как две капли дождя, которые вместе превращаются в радугу.
+        </p>
+
+        <div class="text-block" style="margin-top: 12px;">
+          Спасибо за твою искренность, за смех до слёз и за то, что ты рядом. Ты делаешь
+          этот мир ярче и добрее — и я благодарна за каждую минуту, которую мы проводим вместе.
+        </div>
+
+        <!-- Мелодическая капля: стильный tiny-typewriter эффект -->
+        <div style="margin-top: 14px;">
+          <span class="typewriter" aria-label="мелодичная подпись" style="font-size:1.25rem; color:#555;">
+            Ты — мой самый тёплый момент дня.
+          </span>
+        </div>
+      </div>
+    </section>
+
+    <!-- СЕКЦИЯ 5: Секретное письмо -->
+    <section id="letters" aria-label="Секретное письмо" class="reveal" style="padding-top: 14px;">
+      <div class="section-label">Глава 4 • Секретное письмо</div>
+
+      <div class="letter-wrap">
+        <button class="secret-btn" id="open-letter" type="button">Открыть секретное письмо</button>
+
+        <div class="letter" id="secret-letter" role="region" aria-label="Секретное письмо от тебя ко мне">
+          Дорогая подруга,
+          <br/><br/>
+          Ты — мой самый яркий фон на каждый день. Спасибо за твоё тепло, за терпение и за безграничную веру в меня. Пусть каждый наш новый момент будет похож на сладкий пирог — тёплый, ароматный и с капелькой безумства.
+          <br/><br/>
+          Обнимаю крепко-крепко и люблю тебя безмерно ✨
+        </div>
+      </div>
+    </section>
+
+    <!-- СЕКЦИЯ 6: Мелкие розовые детали, таймлайн путешествий -->
+    <section aria-label="Дорожная карта" class="reveal" style="padding: 0 0 60px;">
+      <div class="section-label">Глава 5 • Дорожная карта мечт</div>
+
+      <div class="card" style="padding: 22px; text-align:center;">
+        <div class="text-block" style="font-size:1.15rem;">
+          Мы мечтаем о море, о горах, и о вечерах с настольными играми и тёплыми беседами. Вместе мы сможем все — ведь мы команда мечты.
+        </div>
+
+        <div class="tile-grid" style="margin-top:14px; grid-template-columns: repeat(3, 1fr);">
+          <div class="tile">
+            <div class="num" style="font-size:1.8rem;">Мечты</div>
+            <div class="lbl" style="font-size:.78rem; margin-top:4px;">не имеют срока годности</div>
+          </div>
+          <div class="tile">
+            <div class="num" style="font-size:1.8rem;">Планы</div>
+            <div class="lbl" style="font-size:.78rem; margin-top:4px;">на каждый сезон</div>
+          </div>
+          <div class="tile">
+            <div class="num" style="font-size:1.8rem;">Дела</div>
+            <div class="lbl" style="font-size:.78rem; margin-top:4px;">делаем вместе</div>
+          </div>
+        </div>
+
+        <p class="text-block" style="margin-top:14px;">
+          Наши совместные приключения — это лучшая история, которую можно перечитывать снова и снова.
+        </p>
+      </div>
+    </section>
+
+    <!-- СЕКЦИЯ 7: Футер-рассказ и контакты -->
+    <section id="footer" aria-label="Контакты" class="reveal" style="padding-bottom: 80px;">
+      <div class="section-label" style="margin-bottom:6px;">Глава 6 • Остаток суток</div>
+
+      <div class="card" style="text-align:center; padding:26px;">
+        <h2 style="font-family:'Playfair Display', serif; font-size:1.9rem; margin-bottom:8px;">
+          Пять минут для дружбы — и целый мир теплее
+        </h2>
+        <p class="text-block" style="font-size:1.05rem;">
+          Если хочешь, напиши мне любые тёплые слова и идеи — я прочту и улыбнусь. Мой мир стал милее благодаря твоему присутствию.
+        </p>
+
+        <div class="gallery" aria-label="Дружеские рисунки" style="justify-items: center;">
+          <!-- повторная мини-галерея без лишних слов, чтобы заполнить страницу -->
+          <figure class="image-card" title="Рука в руке">
+            <svg width="180" height="120" viewBox="0 0 180 120" xmlns="http://www.w3.org/2000/svg">
+              <rect width="180" height="120" rx="14" fill="#fff"/>
+              <path d="M40 100 C70 60 110 60 140 100" stroke="#ff6b9a" stroke-width="6" fill="none"/>
+              <path d="M60 70 L80 50" stroke="#ff7db7" stroke-width="6" />
+            </svg>
+            <figcaption class="caption">Две руки — одно сердце</figcaption>
+          </figure>
+
+          <figure class="image-card" title="Пирог дружбы">
+            <svg width="180" height="120" viewBox="0 0 180 120" xmlns="http://www.w3.org/2000/svg">
+              <rect width="180" height="120" rx="14" fill="#fff0f5"/>
+              <circle cx="70" cy="70" r="26" fill="#ffd1e8"/>
+              <circle cx="110" cy="70" r="26" fill="#ffd1e8"/>
+              <rect x="40" y="20" width="100" height="14" rx="7" fill="#ff9ac2"/>
+            </svg>
+            <figcaption class="caption">Пирог дружбы</figcaption>
+          </figure>
+
+          <figure class="image-card" title="Облака мечты">
+            <svg width="180" height="120" viewBox="0 0 180 120" xmlns="http://www.w3.org/2000/svg">
+              <rect width="180" height="120" rx="14" fill="#f8fbff"/>
+              <ellipse cx="60" cy="60" rx="40" ry="22" fill="#cfe8ff"/>
+              <ellipse cx="120" cy="60" rx="40" ry="22" fill="#cfe8ff"/>
+            </svg>
+            <figcaption class="caption">Облака мечты</figcaption>
+          </figure>
+        </div>
+      </div>
+    </section>
+
+  </div> <!-- /wrapper -->
+
+  <footer id="footer" aria-label="Подвал" style="padding:40px 20px; text-align:center;">
+    <div class="section-label" style="margin-bottom:6px;">До скорой встречи, мой котенок!</div>
+    <div class="text-block" style="max-width:720px; margin:0 auto;">
+      Спасибо за каждую минуту, за смех и за твоё бесконечное тепло. Пусть наш путь будет ярким, как радужный закат, и дружба — крепче любого солнца.
+    </div>
+  </footer>
+
+  <script>
+    // 1) Милый фон: плавные сердечки-пузыри через canvas
+    (function() {
+      const canvas = document.getElementById('canvas-bg');
+      const ctx = canvas.getContext('2d');
+      let petals = [];
+      const colors = ['#ffd1e8', '#fbd2e8', '#ffe9f3', '#ffd6e9', '#fbd2d6'];
+      function resize() {
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+        initPetals();
+      }
+      function Petal() {
+        this.reset = () => {
+          this.x = Math.random() * canvas.width;
+          this.y = -20 - Math.random() * canvas.height;
+          this.size = Math.random() * 18 + 8;
+          this.speedY = Math.random() * 0.6 + 0.3;
+          this.speedX = Math.random() * 0.6 - 0.3;
+          this.rotate = Math.random() * Math.PI * 2;
+          this.spin = Math.random() * 0.02 - 0.01;
+          this.color = colors[Math.floor(Math.random() * colors.length)];
+          this.opacity = Math.random() * 0.5 + 0.4;
+        };
+        this.reset();
+      }
+      Petal.prototype.update = function() {
+        this.y += this.speedY;
+        this.x += this.speedX;
+        this.rotate += this.spin;
+        if (this.y > canvas.height + 20) this.reset();
+      };
+      Petal.prototype.draw = function() {
+        ctx.save();
+        ctx.globalAlpha = this.opacity;
+        ctx.fillStyle = this.color;
+        ctx.translate(this.x, this.y);
+        ctx.rotate(this.rotate);
+        // простой текстовый "лепесток" в виде маленькой ромбик-свечи
+        ctx.beginPath();
+        ctx.moveTo(0, -this.size/2);
+        ctx.lineTo(this.size/2, 0);
+        ctx.lineTo(0, this.size/2);
+        ctx.lineTo(-this.size/2, 0);
+        ctx.closePath();
+        ctx.fill();
+        ctx.restore();
+      };
+      let petalsCount = 0;
+      function initPetals() {
+        petals = [];
+        petalsCount = Math.min(60, Math.floor(window.innerWidth / 18));
+        for (let i = 0; i < petalsCount; i++) petals.push(new Petal());
+      }
+      function loop() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        petals.forEach(p => { p.update(); p.draw(); });
+        requestAnimationFrame(loop);
+      }
+      resize();
+      window.addEventListener('resize', resize);
+      initPetals();
+      loop();
+    })();
+
+    // 2) Плавное появление секций
+    window.addEventListener('DOMContentLoaded', () => {
+      const sections = document.querySelectorAll('section');
+      sections.forEach(sec => sec.classList.add('reveal'));
+      const obs = new IntersectionObserver((entries) => {
+        entries.forEach(e => {
+          if (e.isIntersecting) e.target.classList.add('visible');
+        });
+      }, { threshold: 0.15 });
+      sections.forEach(sec => obs.observe(sec));
+
+      // Живой отчёт.
+      // Старт: 12 августа 2026, 15:00 по местному времени браузера.
+      // Это ровно 4 дня и 3 часа на момент 15 августа 2026, 18:00.
+      // Дата хранится в коде, поэтому обновление страницы ничего не сбрасывает.
+      const reportStart = new Date(2026, 7, 12, 15, 0, 0);
+
+      const days = document.getElementById('report-days');
+      const hours = document.getElementById('report-hours');
+      const minutes = document.getElementById('report-minutes');
+      const seconds = document.getElementById('report-seconds');
+
+      function updateLiveReport() {
+        if (!days || !hours || !minutes || !seconds) return;
+
+        const difference = Math.max(0, Date.now() - reportStart.getTime());
+
+        const totalSeconds = Math.floor(difference / 1000);
+        const d = Math.floor(totalSeconds / 86400);
+        const h = Math.floor((totalSeconds % 86400) / 3600);
+        const m = Math.floor((totalSeconds % 3600) / 60);
+        const s = totalSeconds % 60;
+
+        days.textContent = d;
+        hours.textContent = h;
+        minutes.textContent = m;
+        seconds.textContent = s;
+      }
+
+      updateLiveReport();
+      setInterval(updateLiveReport, 1000);
+
+      // Открытие секретного письма
+      const btn = document.getElementById('open-letter');
+      const letter = document.getElementById('secret-letter');
+      if (btn && letter) {
+        btn.addEventListener('click', () => {
+          const isHidden = letter.style.display === 'none' || letter.style.display === '';
+          if (isHidden) {
+            letter.style.display = 'block';
+            btn.textContent = 'Спрятать письмо';
+            letter.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          } else {
+            letter.style.display = 'none';
+            btn.textContent = 'Открыть секретное письмо';
+          }
+        });
+        letter.style.display = 'none';
+        btn.textContent = 'Открыть секретное письмо';
+      }
+
+      // Типографика — лёгкий typewriter эффект для подписи
+      const tagline = document.getElementById('tagline');
+      if (tagline) {
+        const phrases = [
+          "Ты — мой солнечный луч в пасмурный день.",
+          "С тобой каждый вечер кажется особенным.",
+          "Спасибо за твою искренность и смех."
+        ];
+        let idx = 0;
+        setInterval(() => {
+          tagline.textContent = phrases[idx % phrases.length];
+          idx++;
+        }, 6000);
+      }
+    });
+
+  </script>
+
+</body>
+</html>
